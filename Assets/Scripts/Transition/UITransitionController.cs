@@ -35,7 +35,7 @@ namespace UI.Animation
 		public List<UITransition> transitions = new List<UITransition>();
 		public Dictionary<string, UITransition> transitionDic = new Dictionary<string, UITransition>();
 
-		private Queue<Tween> _tweenerQueue = new Queue<Tween>();
+		private Sequence _sequence;
 
 		private void Awake()
 		{
@@ -60,22 +60,24 @@ namespace UI.Animation
 			if (name.Equals(_currentStateName))
 				return;
 
-			KillTweener();
+			_currentStateName = name;
+
+			_sequence.Kill();
 
 			// Transit
-			List<UIState> states = transitionDic[name].states;
+			UITransition transition = transitionDic[name];
+			List<UIState> states = transition.states;
 			Sequence sequence = DOTween.Sequence();
 
+			transition.onStart?.Invoke();
 			for (int i = 0; i < states.Count; i++)
 			{
-				Debug.Log(states[i].name);
-
 				Tween tween = states[i].Transit();
 				if (tween != null) sequence.Append(tween);
-			}
-			_tweenerQueue.Enqueue(sequence);
+			}			
+			sequence.onComplete += () => transition.onFinished?.Invoke();
 
-			_currentStateName = name;
+			_sequence = sequence;
 		}
 
 		private void Transit_Internal(string name, bool directly)
@@ -83,24 +85,23 @@ namespace UI.Animation
 			if (name.Equals(_currentStateName))
 				return;
 
-			KillTweener();
+			_currentStateName = name;
 
-			List<UIState> states = transitionDic[name].states;
+			_sequence.Kill();
+
+			UITransition transition = transitionDic[name];
+			List<UIState> states = transition.states;
+			Sequence sequence = DOTween.Sequence();
+
+			transition.onStart?.Invoke();
 			for (int i = 0; i < states.Count; i++)
 			{
 				Tween tween = states[i].Transit(directly);
-				if (tween != null) _tweenerQueue.Enqueue(tween);
+				if (tween != null) sequence.Join(tween);
 			}
-			_currentStateName = name;
-		}
+			sequence.onComplete += () => transition.onFinished?.Invoke();
 
-		private void KillTweener()
-		{
-			while (_tweenerQueue.Count > 0)
-			{
-				Tween tween = _tweenerQueue.Dequeue();
-				if (tween.IsActive()) tween.Kill();
-			}
+			_sequence = sequence;
 		}
 
 		private void OnValidate()

@@ -10,7 +10,7 @@ namespace UI.Animation
 
 	public class PunchEffect : UIEffect
 	{
-		[SerializeField] private ShakeEffectType _type;
+		[SerializeField] private PunchEffectType _type;
 		[SerializeField] private Vector3 _punch;
 		[SerializeField] private float _duration;
 		[SerializeField] private int _vibrato = 10;
@@ -27,19 +27,19 @@ namespace UI.Animation
 		{
 			switch (_type)
 			{
-				case ShakeEffectType.Position:
+				case PunchEffectType.Position:
 					_target.DOPunchPosition(_punch, _duration, _vibrato, _elasticity);
 					break;
 
-				case ShakeEffectType.AnchoredPosition:
+				case PunchEffectType.AnchoredPosition:
 					_target.DOPunchAnchorPos(_punch, _duration, _vibrato, _elasticity);
 					break;
 
-				case ShakeEffectType.Scale:
+				case PunchEffectType.Scale:
 					_target.DOPunchScale(_punch, _duration, _vibrato, _elasticity);
 					break;
 
-				case ShakeEffectType.Rotation:
+				case PunchEffectType.Rotation:
 					_target.DOPunchRotation(_punch, _duration, _vibrato, _elasticity);
 					break;
 			}
