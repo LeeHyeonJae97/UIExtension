@@ -37,6 +37,8 @@ namespace UIExtension
 
 		private Sequence _sequence;
 
+		public bool IsInTransition => _sequence.IsActive();
+
 		private void Start()
 		{
 			if (!string.IsNullOrEmpty(_initialStateName))

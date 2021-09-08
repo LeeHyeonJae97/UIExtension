@@ -19,6 +19,8 @@ namespace UIExtension
 		[Space(5)] public UnityEvent onStart;
 		public UnityEvent onFinished;
 
+		public bool IsPlaying => _sequence.IsActive();
+
 		private void OnValidate()
 		{
 			if (_reference == Reference.OnlyChildren) _animations = GetComponentsInChildren<UIAnimation>();

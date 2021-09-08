@@ -10,6 +10,7 @@ namespace UIExtension
     public class FloatingMessage : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _messageText;
+        [SerializeField] private UIAnimationController _controller;
 
         private static UnityAction<string> _show;
 
@@ -25,13 +26,10 @@ namespace UIExtension
 
         private void Show_Internal(string message)
         {
-            _messageText.text = message;
-        }
+            if (_controller.IsPlaying) return;
 
-        [Button]
-        public void Test()
-        {
-            FloatingMessage.Show("Hello");
+            _messageText.text = message;
+            _controller.Play();
         }
     }
 }

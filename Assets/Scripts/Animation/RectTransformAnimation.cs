@@ -24,6 +24,12 @@ namespace UIExtension
 
         private RectTransform _rectTr;
 
+        private void Awake()
+        {
+            if (_rectTr == null) _rectTr = (RectTransform)transform;
+            if (!_loop) _loops = 0;
+        }
+
         private void OnValidate()
         {
             if (_rectTr == null) _rectTr = (RectTransform)transform;

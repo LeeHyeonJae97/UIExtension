@@ -21,6 +21,11 @@ namespace UIExtension
 
         private Graphic _graphic;
 
+        private void Awake()
+        {
+            if (_graphic == null) _graphic = GetComponent<Graphic>();
+        }
+
         private void OnValidate()
         {
             if (_graphic == null) _graphic = GetComponent<Graphic>();
