@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.UI;
-using Extension;
+using UIExtension;
 
 [CanEditMultipleObjects]
 [CustomEditor(typeof(ButtonExtension))]

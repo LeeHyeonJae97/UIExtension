@@ -4,35 +4,38 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
-public class ConfirmModal : MonoBehaviour
+namespace UIExtension
 {
-	[SerializeField] private Text _messageText;
-	[SerializeField] private Text _yesButtonText;
-	[SerializeField] private Text _noButtonText;
-
-	private UnityAction _onYes;
-
-	public static void Show(ConfirmModal prefab, string message, UnityAction onYes, string yesButtonText = null, string noButtonText = null)
+	public class ConfirmModal : MonoBehaviour
 	{
-		ConfirmModal modal = Instantiate(prefab);
+		[SerializeField] private Text _messageText;
+		[SerializeField] private Text _yesButtonText;
+		[SerializeField] private Text _noButtonText;
 
-		modal.gameObject.SetActive(true);
-		modal._messageText.text = message;
-		if (yesButtonText != null)
-			modal._yesButtonText.text = yesButtonText;
-		if (noButtonText != null)
-			modal._noButtonText.text = noButtonText;
-		modal._onYes = onYes;
-	}
+		private UnityAction _onYes;
 
-	public void Yes()
-	{
-		_onYes?.Invoke();
-		Destroy(gameObject);
-	}
+		public static void Show(ConfirmModal prefab, string message, UnityAction onYes, string yesButtonText = null, string noButtonText = null)
+		{
+			ConfirmModal modal = Instantiate(prefab);
 
-	public void No()
-	{
-		Destroy(gameObject);
+			modal.gameObject.SetActive(true);
+			modal._messageText.text = message;
+			if (yesButtonText != null)
+				modal._yesButtonText.text = yesButtonText;
+			if (noButtonText != null)
+				modal._noButtonText.text = noButtonText;
+			modal._onYes = onYes;
+		}
+
+		public void Yes()
+		{
+			_onYes?.Invoke();
+			Destroy(gameObject);
+		}
+
+		public void No()
+		{
+			Destroy(gameObject);
+		}
 	}
 }

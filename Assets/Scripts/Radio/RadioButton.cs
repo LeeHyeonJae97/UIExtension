@@ -6,35 +6,37 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using NaughtyAttributes;
 
-public class RadioButton : Selectable, IPointerClickHandler
+namespace UIExtension
 {
-    [Space(10)]
-    public UnityEvent<bool> onStateChanged;
-    public UnityEvent onSelected;
-    public UnityEvent onDeselected;
-    public UnityAction onClick;
-
-    public void OnPointerClick(PointerEventData eventData)
+    public class RadioButton : Selectable, IPointerClickHandler
     {
-        onClick?.Invoke();
-    }
+        [Space(10)]
+        public UnityEvent<bool> onStateChanged;
+        public UnityEvent onSelected;
+        public UnityEvent onDeselected;
+        public UnityAction onClick;
 
-    public void OnStateChanged(bool value)
-    {
-        onStateChanged?.Invoke(value);
-        if (value)
+        public void OnPointerClick(PointerEventData eventData)
         {
-            targetGraphic.color = colors.normalColor;
-            onSelected?.Invoke();
-
+            onClick?.Invoke();
         }
-        else
+
+        public void OnStateChanged(bool value)
         {
-            targetGraphic.color = colors.selectedColor;
-            onDeselected?.Invoke();
-        }
-    }
+            onStateChanged?.Invoke(value);
+            if (value)
+            {
+                targetGraphic.color = colors.normalColor;
+                onSelected?.Invoke();
 
-    public override void OnSelect(BaseEventData eventData) { }
+            }
+            else
+            {
+                targetGraphic.color = colors.selectedColor;
+                onDeselected?.Invoke();
+            }
+        }
+
+        public override void OnSelect(BaseEventData eventData) { }
+    }
 }
-

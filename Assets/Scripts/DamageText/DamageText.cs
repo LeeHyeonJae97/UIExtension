@@ -5,47 +5,50 @@ using DG.Tweening;
 using UnityEngine.UI;
 using NaughtyAttributes;
 
-public class DamageText : MonoBehaviour
+namespace UIExtension
 {
-    [Header("Target")]
-    [SerializeField] private RectTransform _targetRectTr;
-    [SerializeField] private Graphic _targetGraphic;
-
-    [Header("Settings")]
-    [SerializeField] private float _duration;
-    [SerializeField] private float _startY;
-    [SerializeField] private float _endY;
-    [SerializeField] private Color _startColor = Color.white;
-    [SerializeField] private Color _endColor;
-    [SerializeField] private Vector3 _punch;
-
-    private Sequence _sequence;
-
-    public void Spawn(Vector3 pos)
+    public class DamageText : MonoBehaviour
     {
-        transform.position = pos;
-        Invoke();
-    }
+        [Header("Target")]
+        [SerializeField] private RectTransform _targetRectTr;
+        [SerializeField] private Graphic _targetGraphic;
 
-    private void Invoke()
-    {
-        if (_sequence.IsActive()) _sequence.Kill();
+        [Header("Settings")]
+        [SerializeField] private float _duration;
+        [SerializeField] private float _startY;
+        [SerializeField] private float _endY;
+        [SerializeField] private Color _startColor = Color.white;
+        [SerializeField] private Color _endColor;
+        [SerializeField] private Vector3 _punch;
 
-        _sequence = DOTween.Sequence();
+        private Sequence _sequence;
 
-        _targetRectTr.localScale = Vector3.one;
-        _targetRectTr.anchoredPosition = new Vector2(_targetRectTr.anchoredPosition.x, _startY);
-        _targetGraphic.color = _startColor;
+        public void Spawn(Vector3 pos)
+        {
+            transform.position = pos;
+            Invoke();
+        }
 
-        _sequence.Join(_targetRectTr.DOPunchScale(_punch, _duration, 1, 1));
-        _sequence.Join(_targetRectTr.DOAnchorPosY(_endY, _duration));
-        _sequence.Join(_targetGraphic.DOColor(_endColor, _duration));
-    }
+        private void Invoke()
+        {
+            if (_sequence.IsActive()) _sequence.Kill();
 
-    [Button]
-    public void TestSpawn()
-    {
-        Vector3 pos = new Vector3(Random.Range(-2, 2), Random.Range(-2, 2), 0);
-        Spawn(pos);
+            _sequence = DOTween.Sequence();
+
+            _targetRectTr.localScale = Vector3.one;
+            _targetRectTr.anchoredPosition = new Vector2(_targetRectTr.anchoredPosition.x, _startY);
+            _targetGraphic.color = _startColor;
+
+            _sequence.Join(_targetRectTr.DOPunchScale(_punch, _duration, 1, 1));
+            _sequence.Join(_targetRectTr.DOAnchorPosY(_endY, _duration));
+            _sequence.Join(_targetGraphic.DOColor(_endColor, _duration));
+        }
+
+        [Button]
+        public void TestSpawn()
+        {
+            Vector3 pos = new Vector3(Random.Range(-2, 2), Random.Range(-2, 2), 0);
+            Spawn(pos);
+        }
     }
 }

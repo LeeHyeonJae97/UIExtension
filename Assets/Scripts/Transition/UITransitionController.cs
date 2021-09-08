@@ -6,7 +6,7 @@ using DG.Tweening;
 using UnityEngine.Events;
 using System.Linq;
 
-namespace UI.Animation
+namespace UIExtension
 {
 	public class UITransitionController : MonoBehaviour
 	{
@@ -32,12 +32,12 @@ namespace UI.Animation
 
 		[Space(10)] [SerializeField] private Reference _reference;
 
-		public List<UITransition> transitions = new List<UITransition>();
-		public Dictionary<string, UITransition> transitionDic = new Dictionary<string, UITransition>();
+		[SerializeField] private List<UITransition> _transitions = new List<UITransition>();
+		private Dictionary<string, UITransition> _transitionDic = new Dictionary<string, UITransition>();
 
 		private Sequence _sequence;
 
-		private void Awake()
+		private void Start()
 		{
 			if (!string.IsNullOrEmpty(_initialStateName))
 				TransitDirectly(_initialStateName);
@@ -45,74 +45,15 @@ namespace UI.Animation
 			_currentStateName = _initialStateName;
 		}
 
-		public void Transit(string name)
-		{
-			Transit_Internal(name, false);
-		}
-
-		public void TransitDirectly(string name)
-		{
-			Transit_Internal(name, true);
-		}
-
-		public void TransitSequently(string name)
-		{
-			if (name.Equals(_currentStateName))
-				return;
-
-			_currentStateName = name;
-
-			_sequence.Kill();
-
-			// Transit
-			UITransition transition = transitionDic[name];
-			List<UIState> states = transition.states;
-			Sequence sequence = DOTween.Sequence();
-
-			transition.onStart?.Invoke();
-			for (int i = 0; i < states.Count; i++)
-			{
-				Tween tween = states[i].Transit();
-				if (tween != null) sequence.Append(tween);
-			}			
-			sequence.onComplete += () => transition.onFinished?.Invoke();
-
-			_sequence = sequence;
-		}
-
-		private void Transit_Internal(string name, bool directly)
-		{
-			if (name.Equals(_currentStateName))
-				return;
-
-			_currentStateName = name;
-
-			_sequence.Kill();
-
-			UITransition transition = transitionDic[name];
-			List<UIState> states = transition.states;
-			Sequence sequence = DOTween.Sequence();
-
-			transition.onStart?.Invoke();
-			for (int i = 0; i < states.Count; i++)
-			{
-				Tween tween = states[i].Transit(directly);
-				if (tween != null) sequence.Join(tween);
-			}
-			sequence.onComplete += () => transition.onFinished?.Invoke();
-
-			_sequence = sequence;
-		}
-
 		private void OnValidate()
 		{
 			if (_reference == Reference.OnlyChildren)
 			{
 				// refill dictionary when compiled
-				if (this.transitionDic == null || this.transitionDic.Count == 0)
+				if (this._transitionDic == null || this._transitionDic.Count == 0)
 				{
-					for (int i = 0; i < this.transitions.Count; i++)
-						this.transitionDic.Add(this.transitions[i].stateName, this.transitions[i]);
+					for (int i = 0; i < this._transitions.Count; i++)
+						this._transitionDic.Add(this._transitions[i].stateName, this._transitions[i]);
 				}
 
 				List<UITransition> transitions = new List<UITransition>();
@@ -122,10 +63,10 @@ namespace UI.Animation
 
 				for (int i = 0; i < states.Length; i++)
 				{
-					if (this.transitionDic.ContainsKey(states[i].StateName))
+					if (this._transitionDic.ContainsKey(states[i].StateName))
 					{
 						// use existing transition
-						UITransition transition = this.transitionDic[states[i].StateName];
+						UITransition transition = this._transitionDic[states[i].StateName];
 
 						if (!transitionDic.ContainsKey(states[i].StateName))
 						{
@@ -155,13 +96,84 @@ namespace UI.Animation
 				}
 
 				// update transition list and dictionary
-				this.transitions = transitions;
-				this.transitionDic = transitionDic;
+				this._transitions = transitions;
+				this._transitionDic = transitionDic;
 			}
 			else
 			{
 				Debug.LogWarning("Valid only for 'Only Children'");
 			}
+		}
+
+		public void Transit(string name)
+		{
+			Transit_Internal(name, false);
+		}
+
+		public void TransitDirectly(string name)
+		{
+			Transit_Internal(name, true);
+		}
+
+		public void TransitSequently(string name)
+		{
+			if (_transitions == null || _transitions.Count == 0)
+			{
+				Debug.LogWarning("No transitions");
+				return;
+			}
+
+			if (name.Equals(_currentStateName))
+				return;
+
+			_currentStateName = name;
+
+			if(_sequence.IsActive()) _sequence.Kill();
+
+			// Transit
+			UITransition transition = _transitionDic[name];
+			List<UIState> states = transition.states;
+			Sequence sequence = DOTween.Sequence();
+
+			transition.onStart?.Invoke();
+			for (int i = 0; i < states.Count; i++)
+			{
+				Tween tween = states[i].Transit();
+				if (tween != null) sequence.Append(tween);
+			}
+			sequence.onComplete += () => transition.onFinished?.Invoke();
+
+			_sequence = sequence;
+		}
+
+		private void Transit_Internal(string name, bool directly)
+		{
+			if (_transitions == null || _transitions.Count == 0)
+			{
+				Debug.LogWarning("No transitions");
+				return;
+			}
+
+			if (name.Equals(_currentStateName))
+				return;
+
+			_currentStateName = name;
+
+			if (_sequence.IsActive()) _sequence.Kill();
+
+			UITransition transition = _transitionDic[name];
+			List<UIState> states = transition.states;
+			Sequence sequence = DOTween.Sequence();
+
+			transition.onStart?.Invoke();
+			for (int i = 0; i < states.Count; i++)
+			{
+				Tween tween = states[i].Transit(directly);
+				if (tween != null) sequence.Join(tween);
+			}
+			sequence.onComplete += () => transition.onFinished?.Invoke();
+
+			_sequence = sequence;
 		}
 	}
 }

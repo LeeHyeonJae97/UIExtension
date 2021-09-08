@@ -4,7 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using NaughtyAttributes;
 
-namespace UI.Animation
+namespace UIExtension
 {
 	public enum PunchEffectType { Position, AnchoredPosition, Scale, Rotation }
 

@@ -5,65 +5,68 @@ using UnityEditor;
 using NaughtyAttributes;
 using System;
 
-public class UIInitializeTarget : MonoBehaviour
+namespace UIExtension
 {
-    private enum ActivateTarget { Canvas, Self }
-
-    [SerializeField] private bool _overrideInitPos;
-    [ShowIf("_overrideInitPos")]
-    [Indent(1)]
-    [SerializeField] private Vector2 _anchoredPos;
-    [SerializeField] private bool _setActiveOnAwake;
-    [ShowIf("_setActiveOnAwake")]
-    [Indent(1)]
-    [SerializeField] private bool _active;
-    [ShowIf("_setActiveOnAwake")]
-    [Indent(1)]
-    [SerializeField] private ActivateTarget _activateTarget;
-
-    private void OnValidate()
+    public class UIInitializeTarget : MonoBehaviour
     {
-        if (!_overrideInitPos)
-            _anchoredPos = Vector2.zero;
+        private enum ActivateTarget { Canvas, Self }
 
-        if (!_setActiveOnAwake)
-        {
-            _active = false;
-            _activateTarget = ActivateTarget.Canvas;
-        }
-    }
+        [SerializeField] private bool _overrideInitPos;
+        [ShowIf("_overrideInitPos")]
+        [Indent(1)]
+        [SerializeField] private Vector2 _anchoredPos;
+        [SerializeField] private bool _setActiveOnAwake;
+        [ShowIf("_setActiveOnAwake")]
+        [Indent(1)]
+        [SerializeField] private bool _active;
+        [ShowIf("_setActiveOnAwake")]
+        [Indent(1)]
+        [SerializeField] private ActivateTarget _activateTarget;
 
-    public void Init()
-    {
-        GetComponent<RectTransform>().anchoredPosition = _anchoredPos;
-        if (_setActiveOnAwake)
+        private void OnValidate()
         {
-            switch (_activateTarget)
+            if (!_overrideInitPos)
+                _anchoredPos = Vector2.zero;
+
+            if (!_setActiveOnAwake)
             {
-                case ActivateTarget.Canvas:
-                    GetComponentsInParent<Canvas>(true)[0].enabled = _active;
-                    break;
-
-                case ActivateTarget.Self:
-                    gameObject.SetActive(_active);
-                    break;
+                _active = false;
+                _activateTarget = ActivateTarget.Canvas;
             }
         }
 
-        Destroy(this);
-    }
+        public void Init()
+        {
+            GetComponent<RectTransform>().anchoredPosition = _anchoredPos;
+            if (_setActiveOnAwake)
+            {
+                switch (_activateTarget)
+                {
+                    case ActivateTarget.Canvas:
+                        GetComponentsInParent<Canvas>(true)[0].enabled = _active;
+                        break;
 
-    [Button("Load", EButtonEnableMode.Editor, 10)]
-    public void Load()
-    {
-        Undo.RecordObject(gameObject.transform, "Load");
-        GetComponent<RectTransform>().anchoredPosition = _anchoredPos;
-    }
+                    case ActivateTarget.Self:
+                        gameObject.SetActive(_active);
+                        break;
+                }
+            }
 
-    [ShowIf("_overrideInitPos")]
-    [Button("Save", EButtonEnableMode.Editor)]
-    public void Save()
-    {
-        _anchoredPos = GetComponent<RectTransform>().anchoredPosition;
+            Destroy(this);
+        }
+
+        [Button("Load", EButtonEnableMode.Editor, 10)]
+        public void Load()
+        {
+            Undo.RecordObject(gameObject.transform, "Load");
+            GetComponent<RectTransform>().anchoredPosition = _anchoredPos;
+        }
+
+        [ShowIf("_overrideInitPos")]
+        [Button("Save", EButtonEnableMode.Editor)]
+        public void Save()
+        {
+            _anchoredPos = GetComponent<RectTransform>().anchoredPosition;
+        }
     }
 }

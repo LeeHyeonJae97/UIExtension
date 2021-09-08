@@ -5,7 +5,7 @@ using UnityEditor;
 using NaughtyAttributes;
 using DG.Tweening;
 
-namespace UI.Animation
+namespace UIExtension
 {
 	public class ActiveState : UIState
 	{

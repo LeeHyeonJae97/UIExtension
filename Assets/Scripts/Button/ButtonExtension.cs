@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace Extension
+namespace UIExtension
 {
 	public class ButtonExtension : Button
 	{

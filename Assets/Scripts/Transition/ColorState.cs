@@ -7,7 +7,7 @@ using UnityEngine.Events;
 using DG.Tweening;
 using NaughtyAttributes;
 
-namespace UI.Animation
+namespace UIExtension
 {
 	[RequireComponent(typeof(Graphic))]
 	public class ColorState : UIState

@@ -4,7 +4,7 @@ using UnityEngine;
 using NaughtyAttributes;
 using DG.Tweening;
 
-namespace UI.Animation
+namespace UIExtension
 {
 	public enum ShakeEffectType { Position, AnchoredPosition, Scale, Rotation }
 

@@ -5,16 +5,19 @@ using DG.Tweening;
 using UnityEngine.Events;
 using NaughtyAttributes;
 
-public abstract class UIState : MonoBehaviour
+namespace UIExtension
 {
-	[Foldout("_stateName", true)]
-	[SerializeField] protected string _stateName;
-	public string StateName => _stateName;
+	public abstract class UIState : MonoBehaviour
+	{
+		[Foldout("_stateName", true)]
+		[SerializeField] protected string _stateName;
+		public string StateName => _stateName;
 
-	[Foldout("_stateName", true)]
-	[SerializeField] protected float _delay;
+		[Foldout("_stateName", true)]
+		[SerializeField] protected float _delay;
 
-	public abstract Tween Transit(bool directly = false);
-	public abstract void Save();
-	public abstract void Load();
+		public abstract Tween Transit(bool directly = false);
+		public abstract void Save();
+		public abstract void Load();
+	}
 }

@@ -6,51 +6,54 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using NaughtyAttributes;
 
-public class ToggleButton : Selectable, IPointerClickHandler
+namespace UIExtension
 {
-    private enum ToggleTransition { ColorTint, SpriteSwap }
-
-    [SerializeField] private ToggleTransition _toggleTransition;
-
-    [SerializeField] private Color _onColor = Color.white;
-    [SerializeField] private Color _offColor = Color.white;
-
-    [SerializeField] private Sprite _onSprite;
-    [SerializeField] private Sprite _offSprite;
-
-    public UnityEvent<bool> onStateChanged;
-    [SerializeField] private bool _isOnOnStart;
-
-    private bool _isOn;
-    public bool IsOn
+    public class ToggleButton : Selectable, IPointerClickHandler
     {
-        get { return _isOn; }
+        private enum ToggleTransition { ColorTint, SpriteSwap }
 
-        set
+        [SerializeField] private ToggleTransition _toggleTransition;
+
+        [SerializeField] private Color _onColor = Color.white;
+        [SerializeField] private Color _offColor = Color.white;
+
+        [SerializeField] private Sprite _onSprite;
+        [SerializeField] private Sprite _offSprite;
+
+        public UnityEvent<bool> onStateChanged;
+        [SerializeField] private bool _isOnOnStart;
+
+        private bool _isOn;
+        public bool IsOn
         {
-            _isOn = value;
-            switch (_toggleTransition)
+            get { return _isOn; }
+
+            set
             {
-                case ToggleTransition.ColorTint:
-                    targetGraphic.color = _isOn ? _onColor : _offColor;
-                    break;
+                _isOn = value;
+                switch (_toggleTransition)
+                {
+                    case ToggleTransition.ColorTint:
+                        targetGraphic.color = _isOn ? _onColor : _offColor;
+                        break;
 
-                case ToggleTransition.SpriteSwap:
-                    (targetGraphic as Image).sprite = _isOn ? _onSprite : _offSprite;
-                    break;
+                    case ToggleTransition.SpriteSwap:
+                        (targetGraphic as Image).sprite = _isOn ? _onSprite : _offSprite;
+                        break;
+                }
+                onStateChanged.Invoke(value);
             }
-            onStateChanged.Invoke(value);
         }
-    }
 
-    protected override void Start()
-    {
-        base.Start();
-        IsOn = _isOnOnStart;
-    }
+        protected override void Start()
+        {
+            base.Start();
+            IsOn = _isOnOnStart;
+        }
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        IsOn = !IsOn;
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            IsOn = !IsOn;
+        }
     }
 }

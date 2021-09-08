@@ -7,7 +7,7 @@ using DG.Tweening;
 using UnityEngine.Events;
 using NaughtyAttributes;
 
-namespace UI.Animation
+namespace UIExtension
 {
 	[RequireComponent(typeof(Image))]
 	public class SpriteState : UIState

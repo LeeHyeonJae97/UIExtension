@@ -1,28 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
+using TMPro;
 
-public class AlertModal : MonoBehaviour
+namespace UIExtension
 {
-	[SerializeField] private Image _iconImage;
-	[SerializeField] private Text _messageText;
-
-	public static void Show(AlertModal prefab, string message, Sprite icon = null)
+	public class AlertModal : MonoBehaviour
 	{
-		AlertModal modal = Instantiate(prefab);
+		[SerializeField] private Image _iconImage;
+		[SerializeField] private TextMeshProUGUI _messageText;
 
-		modal.gameObject.SetActive(true);
-		if (icon != null)
+		private Canvas _canvas;
+
+		private static UnityAction<string> _show;
+
+		private void Start()
 		{
-			modal._iconImage.sprite = icon;
-			modal._iconImage.SetNativeSize();
+			_canvas = GetComponent<Canvas>();
+			_show += Show_Internal;
 		}
-		modal._messageText.text = message;
-	}
 
-	public void Hide()
-	{
-		Destroy(gameObject);
+		public static void Show(string message)
+		{
+			_show?.Invoke(message);
+		}
+
+		private void Show_Internal(string message)
+		{
+			_canvas.enabled = true;
+			_messageText.text = message;
+		}
+
+		public void Hide()
+		{
+			_canvas.enabled = false;
+		}
 	}
 }

@@ -5,7 +5,7 @@ using NaughtyAttributes;
 using UnityEngine.UI;
 using DG.Tweening;
 
-namespace UI.Animation
+namespace UIExtension
 {
 	[RequireComponent(typeof(Graphic))]
 	public class BlinkEffect : UIEffect
