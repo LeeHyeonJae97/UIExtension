@@ -13,6 +13,7 @@ public class ButtonExtensionEditor : ButtonEditor
 	private SerializedProperty _onUpProp;
 	private SerializedProperty _longPressProp;
 	private SerializedProperty _pressedTimeForLongPressProp;
+	private SerializedProperty _longPressEventInvokeIntervalProp;
 	private SerializedProperty _onEnterLongPressProp;
 	private SerializedProperty _onLongPressProp;
 	private SerializedProperty _onExitLongPressProp;
@@ -28,6 +29,7 @@ public class ButtonExtensionEditor : ButtonEditor
 		_onUpProp = serializedObject.FindProperty("onUp");
 		_longPressProp = serializedObject.FindProperty("_longPress");
 		_pressedTimeForLongPressProp = serializedObject.FindProperty("_pressedTimeForLongPress");
+		_longPressEventInvokeIntervalProp = serializedObject.FindProperty("_longPressEventInvokeInterval");
 		_onEnterLongPressProp = serializedObject.FindProperty("onEnterLongPress");
 		_onLongPressProp = serializedObject.FindProperty("onLongPress");
 		_onExitLongPressProp = serializedObject.FindProperty("onExitLongPress");
@@ -44,19 +46,26 @@ public class ButtonExtensionEditor : ButtonEditor
 
 		EditorGUILayout.PropertyField(_onDownProp);
 		EditorGUILayout.PropertyField(_onUpProp);
+
 		EditorGUILayout.PropertyField(_longPressProp);
 		if (_longPressProp.boolValue)
 		{
+			EditorGUI.indentLevel++;
 			EditorGUILayout.PropertyField(_pressedTimeForLongPressProp);
+			EditorGUILayout.PropertyField(_longPressEventInvokeIntervalProp);
+			EditorGUI.indentLevel--;
 			EditorGUILayout.Space(10);
 			EditorGUILayout.PropertyField(_onEnterLongPressProp);
 			EditorGUILayout.PropertyField(_onLongPressProp);
 			EditorGUILayout.PropertyField(_onExitLongPressProp);
 		}
+
 		EditorGUILayout.PropertyField(_doubleClickProp);
 		if (_doubleClickProp.boolValue)
 		{
+			EditorGUI.indentLevel++;
 			EditorGUILayout.PropertyField(_clickIntervalForDoubleClickProp);
+			EditorGUI.indentLevel--;
 			EditorGUILayout.Space(10);
 			EditorGUILayout.PropertyField(_onDoubleClickProp);
 		}

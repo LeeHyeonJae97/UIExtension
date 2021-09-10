@@ -17,7 +17,10 @@ namespace UIExtension
 		private bool _pressed;
 		private bool _longPressed;
 		[SerializeField] private float _pressedTimeForLongPress;
-		private float _pressedTime;
+		[SerializeField] private float _longPressEventInvokeInterval;
+		private float _curPressedTime;
+		private float _curLongPressEventInvokeInterval;
+
 		public UnityEvent onEnterLongPress;
 		public UnityEvent onLongPress;
 		public UnityEvent onExitLongPress;
@@ -30,27 +33,26 @@ namespace UIExtension
 
 		protected override void Awake()
 		{
-            //onDown.AddListener(() => Debug.Log("Down"));
-            //onUp.AddListener(() => Debug.Log("Up"));
-            //onClick.AddListener(() => Debug.Log("Click"));
-            //if (_longPress)
-            //{
-            //    onEnterLongPress.AddListener(() => Debug.Log("Enter long press"));
-            //    onLongPress.AddListener(() => Debug.Log("Long press"));
-            //    onExitLongPress.AddListener(() => Debug.Log("Exit long press"));
-            //}
-            //if (_doubleClick)
-            //    onDoubleClick.AddListener(() => Debug.Log("Double click"));
+			//onDown.AddListener(() => Debug.Log("Down"));
+			//onUp.AddListener(() => Debug.Log("Up"));
+			//onClick.AddListener(() => Debug.Log("Click"));
+			if (_longPress)
+			{
+				onEnterLongPress.AddListener(() => Debug.Log("Enter long press"));
+				onLongPress.AddListener(() => Debug.Log("Long press"));
+				onExitLongPress.AddListener(() => Debug.Log("Exit long press"));
+			}
+			//if (_doubleClick)
+			//    onDoubleClick.AddListener(() => Debug.Log("Double click"));
 
-            if (_doubleClick)
-				_clickInterval = _clickIntervalForDoubleClick;
+			if (_doubleClick) _clickInterval = _clickIntervalForDoubleClick;
 		}
 
 		private void Update()
 		{
 			if (_longPress && _pressed)
 			{
-				if (_pressedTime >= _pressedTimeForLongPress)
+				if (_curPressedTime >= _pressedTimeForLongPress)
 				{
 					if (!_longPressed)
 					{
@@ -58,16 +60,23 @@ namespace UIExtension
 						_longPressed = true;
 					}
 
-					onLongPress?.Invoke();
+					if (_curLongPressEventInvokeInterval > _longPressEventInvokeInterval)
+					{
+						onLongPress?.Invoke();
+						_curLongPressEventInvokeInterval = 0;
+					}
+					else
+					{
+						_curLongPressEventInvokeInterval += Time.deltaTime;
+					}
 				}
 				else
 				{
-					_pressedTime += Time.deltaTime;
+					_curPressedTime += Time.deltaTime;
 				}
 			}
 
-			if (_doubleClick && _clickInterval >= 0)
-				_clickInterval -= Time.deltaTime;
+			if (_doubleClick && _clickInterval >= 0) _clickInterval -= Time.deltaTime;
 		}
 
 		public override void OnPointerDown(PointerEventData eventData)
@@ -78,7 +87,8 @@ namespace UIExtension
 			if (_longPress)
 			{
 				_pressed = true;
-				_pressedTime = 0;
+				_curPressedTime = 0;
+				_curLongPressEventInvokeInterval = 0;
 			}
 		}
 
@@ -124,9 +134,7 @@ namespace UIExtension
 		public override void OnPointerExit(PointerEventData eventData)
 		{
 			base.OnPointerExit(eventData);
-
-			if (_longPress && _pressed)
-				_pressed = false;
+			if (_longPress && _pressed) _pressed = false;
 		}
 	}
 }
